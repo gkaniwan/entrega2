@@ -1,10 +1,63 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Pressable, Image } from 'react-native';
+import React, {useState} from "react";
+import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
+
+  const initialState = [
+    { id: 1, text:"Te"},
+    { id: 2, text:"Cafe"},
+    { id: 3, text:"Mate"},
+  ];
+
+  const [text, setText] = useState("");
+  const [list, setList] = useState(initialState);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const addItem = () => {
+    list.push({
+      id: Math.random(),
+      text: text,
+    });
+
+    setList(list);
+    setText("");
+  }
+
+  const clearList = () => {
+    setList([]);
+    setModalVisible(false);
+  }
+
   return (
     <View style={styles.container}>
+
+    <Modal animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!isModalVisible);
+        }}>
+      <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+           <Text style={styles.modalText}>¿Desea Eliminar la lista?</Text> 
+           <View style={styles.buttonContainer}>
+           <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => clearList()}>
+              <Text style={styles.textStyle}>Si</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(false)}>
+              <Text style={styles.textStyle}>No</Text>
+            </Pressable>
+           </View>
+          </View>
+        </View>
+    </Modal>
+
       <Image style={styles.imagen} 
         source={{
           uri: "https://img.freepik.com/vector-premium/ilustracion-vectorial-icono-lista-compras-icono-gestion-compras_550971-18.jpg?w=2000",
@@ -13,15 +66,24 @@ export default function App() {
       <Text style={styles.titulo}>Lista de compras</Text>
       <View style={styles.contenedorLista}>
         <View style={styles.inputContainer}>
-          <TextInput style={styles.input} placeholder="Ingrese aqui un item..."/>
+          <TextInput 
+            style={styles.input} 
+            placeholder="Ingrese aqui un item..." 
+            value={text} 
+            onChangeText={(value) => setText(value)}/>
         </View>
-        <Pressable style={styles.estiloBoton} onPress={()=>console.log("BOTON PRESIONADO")}>
+        <Pressable 
+            style={styles.estiloBoton} 
+            onPress={()=> addItem()} >
           <Ionicons name="add-circle" size={30} color="green" />
         </Pressable>
       </View>
-      <Text style={styles.parrafo}>Te</Text>
-      <Text style={styles.parrafo}>Cafe</Text>
-      <Text style={styles.parrafo}>Mate</Text>
+      <FlatList data = {list} keyExtractor={item => item.id} renderItem={({item}) => (<Text tyle={styles.parrafo}> {item.text}</Text>)} />
+      <Pressable 
+            style={styles.estiloBoton} 
+            onPress={()=> setModalVisible(true)} >
+          <Ionicons name="trash" size={30} color="green" />
+        </Pressable>
     </View>
   );
 }
@@ -66,5 +128,50 @@ const styles = StyleSheet.create({
     marginTop: 40,
     height:100,
     width: 100,
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    margin: 5,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row', // Alinea los botones horizontalmente
+  },
 });
