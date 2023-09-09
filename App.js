@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import { StyleSheet, Text, View, TextInput, Pressable, Image, FlatList, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import ListItem from "./src/ListItem";
+import AddItem from "./src/AddItem";
 
 export default function App() {
 
@@ -64,21 +66,12 @@ export default function App() {
         }}
       />
       <Text style={styles.titulo}>Lista de compras</Text>
-      <View style={styles.contenedorLista}>
-        <View style={styles.inputContainer}>
-          <TextInput 
-            style={styles.input} 
-            placeholder="Ingrese aqui un item..." 
-            value={text} 
-            onChangeText={(value) => setText(value)}/>
-        </View>
-        <Pressable 
-            style={styles.estiloBoton} 
-            onPress={()=> addItem()} >
-          <Ionicons name="add-circle" size={30} color="green" />
-        </Pressable>
-      </View>
-      <FlatList data = {list} keyExtractor={item => item.id} renderItem={({item}) => (<Text tyle={styles.parrafo}> {item.text}</Text>)} />
+
+      <AddItem text={text} setText={setText} addItem={addItem}/>
+      <FlatList data = {list} keyExtractor={item => item.id} renderItem={({item}) => (
+        <ListItem item ={item} />
+      // <Text tyle={styles.parrafo}> {item.text}</Text>
+      )} />
       <Pressable 
             style={styles.estiloBoton} 
             onPress={()=> setModalVisible(true)} >
@@ -88,7 +81,7 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+ export const styles = StyleSheet.create({
   container: {
     // flex: 1,
     backgroundColor: '#fff',
@@ -100,30 +93,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "green",
     borderBottomWidth: 4,
   },
-  input: {
-    padding:5,
-    fontSize:18,
-    width:200,
-  },
-  inputContainer: {
-    marginTop: 15,
-    borderColor:"green",
-    borderWidth:1,
-    marginBottom: 10,
-  },
-  contenedorLista: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  estiloBoton: {
-    marginTop: 15,
-    marginLeft: 10,
-    marginBottom: 10,
-  },
-  parrafo: {
-    fontSize:14,
-    marginVertical:1,
-  },
+
   imagen:{
     marginTop: 40,
     height:100,
